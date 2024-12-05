@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+  <meta name="viewport" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+  <title>Simple Timer</title>
+  <style>
+    body {
+      font-family: cursive, 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* 背景选择button */
+    #backgroundSetter {
+      display: none;
+    }
+
+    .timer-container {
+      text-align: center;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.2);
+      /* opacity: 0.5; */
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    #timer {
+      font-size: 48px;
+      margin: 20px;
+    }
+
+    button {
+      font-size: 24px;
+      /* 手写体 */
+      font-family: cursive;
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      /* Rounded corners */
+      background-color: #007BFF;
+      /* Blue background */
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    /* button悬停特效 */
+    button:hover {
+      background-color: #0056b3;
+      /* Darker blue on hover */
+    }
+
+    /* 侧边栏 */
+    .sidebar {
+      width: 200px;
+      height: 100%;
+      background-color: rgba(160, 154, 154, 0.7);
+      color: white;
+      padding: 20px;
+      box-sizing: border-box;
+      position: fixed;
+      top: 0;
+      right: -250px;
+      /* Initially hide the sidebar */
+      transition: right 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      border-radius: 5px;
+    }
+
+    .sidebar.open {
+      right: 0;
+      /* Slide in the sidebar when open */
+    }
+
+    .toggle-button {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 100;
+      /* Ensure the button is above the sidebar */
+      width: 50px;
+      height: 50px;
+      background-color: rgba(0, 0, 0, 0.5);
+      /* Semi-transparent black background */
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease-in-out;
+    }
+
+    .toggle-button:hover {
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+  </style>
+</head>
+
+<body>
+  <input type="file" id="backgroundSetter" accept="image/*" onchange="setBackground(this.files)" />
+
+  <!-- 侧边栏 -->
+  <div class="toggle-button" id="toggleButton">&#9776;</div>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-content">
+      <div class="sidebar-header">
+        <h3>MENU</h3>
+      </div>
+      <ul class="sidebar-menu">
+        <li><label for="backgroundSetter">background</label></li>
+        <li><label>to be continue</label></li>
+        <!-- Add more settings options here -->
+      </ul>
+    </div>
+  </div>
+
+
+  <!-- timer区域 -->
+  <div class="timer-container">
+    <div id="timer">00:00:00</div>
+    <button id="startPauseBtn" onclick="startPauseTimer()">Start</button>
+    <button onclick="resetTimer()">Reset</button>
+
+  </div>
+
+  <link rel="stylesheet" href="APlayer.min.css">
+  <div id="aplayer"></div>
+  <script src="APlayer.min.js"></script>
+
+  <script>
+    let seconds = 0;
+    let interval = null;
+
+    // 当页面加载时，尝试从localStorage获取背景图片
+    window.onload = function () {
+      const savedBackground = localStorage.getItem('backgroundImageUrl');
+      if (savedBackground) {
+        document.body.style.backgroundImage = `url(${savedBackground})`;
+      }
+    };
+
+    function setBackground(files) {
+      if (files.length > 0) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const backgroundImageUrl = e.target.result;
+          document.body.style.backgroundImage = `url(${backgroundImageUrl})`;
+          // 保存背景图片URL到localStorage
+          localStorage.setItem('backgroundImageUrl', backgroundImageUrl);
+        };
+        reader.readAsDataURL(files[0]);
+      }
+    }
+
+    function updateTimer() {
+      let hours = Math.floor(seconds / 3600);
+      let minutes = Math.floor((seconds - (hours * 3600)) / 60);
+      let secs = seconds % 60;
+
+      hours = hours < 10 ? "0" + hours : hours;
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      secs = secs < 10 ? "0" + secs : secs;
+
+      document.getElementById("timer").textContent = hours + ":" + minutes + ":" + secs;
+    }
+
+    function startPauseTimer() {
+      if (interval === null) {
+        interval = setInterval(() => {
+          seconds++;
+          updateTimer();
+        }, 1000);
+        document.getElementById("startPauseBtn").textContent = "Pause";
+      } else {
+        clearInterval(interval);
+        interval = null;
+        document.getElementById("startPauseBtn").textContent = "Start";
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(interval);
+      interval = null;
+      seconds = 0;
+      updateTimer();
+      document.getElementById("startPauseBtn").textContent = "Start";
+    }
+
+
+    // 侧边栏
+    const toggleButton = document.getElementById('toggleButton');
+    const sidebar = document.getElementById('sidebar');
+
+    function toggleSidebar() {
+      sidebar.classList.toggle('open');
+      // Update the button text based on the sidebar's open state
+      toggleButton.innerHTML = sidebar.classList.contains('open') ? '&times;' : '&#9776;';
+    }
+
+
+    // 点击事件处理函数
+    function handleClickOutside(e) {
+      // 检查点击事件是否发生在侧边栏或按钮之外
+      if (!sidebar.contains(e.target) && e.target !== toggleButton) {
+        if (sidebar.classList.contains('open')) {
+          sidebar.classList.remove('open');
+          toggleButton.innerHTML = '&#9776;'; // 更新按钮文本
+        }
+      }
+    }
+
+    // 为toggleButton添加点击事件监听器
+    toggleButton.addEventListener('click', toggleSidebar);
+    // 为整个文档添加点击事件监听器
+    document.addEventListener('click', handleClickOutside);
+
+
+    document.addEventListener('keydown', (event) => {
+      // 禁用F11默认行为
+      if (event.key === 'F11') {
+        event.preventDefault();
+      }
+    });
+
+    const ap = new APlayer({
+      container: document.getElementById('aplayer'),
+      audio: [{
+        name: 'name',
+        artist: 'artist',
+        url: 'https://m704.music.126.net/20241205092316/39ac7a25c976f1be1364fcb723157782/jdyyaac/045f/040b/0f0b/35e5eb94fc3a8aa6f6c48a28748419b4.m4a?',
+        cover: 'cover.jpg'
+      }]
+    });
+  </script>
+</body>
+
+</html>
