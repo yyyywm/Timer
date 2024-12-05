@@ -1,3 +1,232 @@
 /* styles.css */
 
 /* Add styles here to customize the appearance of your app */
+
+body {
+    font-family: cursive,emoji, 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* 背景选择button */
+#backgroundSetter {
+    display: none;
+}
+
+.timer-container {
+    text-align: center;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.2);
+    /* opacity: 0.5; */
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#timer {
+    font-size: 48px;
+    margin: 20px;
+}
+
+button {
+    font-size: 24px;
+    /* 手写体 */
+    font-family: cursive;
+    padding: 10px 20px;
+    margin: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    /* Rounded corners */
+    background-color: #007BFF;
+    /* Blue background */
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+/* button悬停特效 */
+button:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
+}
+
+/* 侧边栏 */
+.sidebar {
+    width: 200px;
+    height: 100%;
+    background-color: rgba(160, 154, 154, 0.7);
+    color: white;
+    padding: 20px;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    right: -250px;
+    /* Initially hide the sidebar */
+    transition: right 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+}
+
+.sidebar.open {
+    right: 0;
+    /* Slide in the sidebar when open */
+}
+
+.toggle-button {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 100;
+    /* Ensure the button is above the sidebar */
+    width: 50px;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent black background */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.toggle-button:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* 自定义播放器样式 */
+.custom-music-player {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 20%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1000;
+}
+
+/* 鼠标悬停时的效果 */
+.custom-music-player:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+
+/* 弹窗 */
+.modal {
+    display: none;
+    /* 默认隐藏 */
+    position: fixed;
+    /* 固定定位 */
+    z-index: 1000;
+    /* 置于顶层 */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* 宽度100% */
+    height: 100%;
+    /* 高度100% */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* 半透明背景 */
+    overflow: auto;
+    /* 允许滚动 */
+}
+
+/* 弹窗内容的样式 */
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    /* 10%从顶部和水平居中 */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px;
+    /* 宽度300px */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* 轻微的阴影 */
+    border-radius: 8px;
+    /* 圆角边框 */
+    animation-name: animatetop;
+    animation-duration: 0.4s;
+}
+
+/* 关闭按钮的样式 */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 输入框样式 */
+#playlistIdInput {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* 动画效果 */
+@keyframes animatetop {
+    from {
+        top: -300px;
+        opacity: 0
+    }
+
+    to {
+        top: 10%;
+        opacity: 1
+    }
+}
+
+/* 弹窗的CSS样式 */
+.amodal {
+    display: none;
+    position: fixed;
+    /* 固定定位 */
+    z-index: 1000;
+    /* 置于顶层 */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* 宽度100% */
+    height: 100%;
+    /* 高度100% */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* 半透明背景 */
+}
+
+.browser-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    /* 10%从顶部和水平居中 */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    height: 80%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* 轻微的阴影 */
+    border-radius: 8px;
+    /* 圆角边框 */
+    animation-name: animatetop;
+    animation-duration: 0.4s;
+}

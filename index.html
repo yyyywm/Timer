@@ -3,130 +3,13 @@
 
 <head>
   <meta charset="UTF-8">
-  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
-  <meta name="viewport" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0,unsafe-inline"> -->
+  <meta name="viewport" content="default-src 'self',script-src 'self', style-src 'self' 'unsafe-inline'">
   <!-- require APlayer -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
+  <link rel="stylesheet" href="./styles.css">
+
   <title>Simple Timer</title>
-  <style>
-    body {
-      font-family: cursive, 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    /* 背景选择button */
-    #backgroundSetter {
-      display: none;
-    }
-
-    .timer-container {
-      text-align: center;
-      z-index: 10;
-      background: rgba(255, 255, 255, 0.2);
-      /* opacity: 0.5; */
-      padding: 20px;
-      border-radius: 10px;
-    }
-
-    #timer {
-      font-size: 48px;
-      margin: 20px;
-    }
-
-    button {
-      font-size: 24px;
-      /* 手写体 */
-      font-family: cursive;
-      padding: 10px 20px;
-      margin: 5px;
-      cursor: pointer;
-      border: none;
-      border-radius: 5px;
-      /* Rounded corners */
-      background-color: #007BFF;
-      /* Blue background */
-      color: white;
-      transition: background-color 0.3s ease;
-    }
-
-    /* button悬停特效 */
-    button:hover {
-      background-color: #0056b3;
-      /* Darker blue on hover */
-    }
-
-    /* 侧边栏 */
-    .sidebar {
-      width: 200px;
-      height: 100%;
-      background-color: rgba(160, 154, 154, 0.7);
-      color: white;
-      padding: 20px;
-      box-sizing: border-box;
-      position: fixed;
-      top: 0;
-      right: -250px;
-      /* Initially hide the sidebar */
-      transition: right 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      border-radius: 5px;
-    }
-
-    .sidebar.open {
-      right: 0;
-      /* Slide in the sidebar when open */
-    }
-
-    .toggle-button {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      z-index: 100;
-      /* Ensure the button is above the sidebar */
-      width: 50px;
-      height: 50px;
-      background-color: rgba(0, 0, 0, 0.5);
-      /* Semi-transparent black background */
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      border-radius: 5px;
-      transition: background-color 0.3s ease-in-out;
-    }
-
-    .toggle-button:hover {
-      background-color: rgba(0, 0, 0, 0.7);
-    }
-
-    /* 自定义播放器样式 */
-    .custom-music-player {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      z-index: 1000;
-    }
-
-    /* 鼠标悬停时的效果 */
-    .custom-music-player:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    }
-  </style>
 </head>
 
 <body>
@@ -140,7 +23,8 @@
         <h3>MENU</h3>
       </div>
       <ul class="sidebar-menu">
-        <li><label for="backgroundSetter">background</label></li>
+        <li><label for="backgroundSetter">Background</label></li>
+        <li><label onclick="openModal()">Play list</label></li>
         <li><label>to be continue</label></li>
         <!-- Add more settings options here -->
       </ul>
@@ -157,111 +41,29 @@
   </div>
 
   <!-- 底部播放器 -->
-  <div class="custom-music-player">
+  <div class="custom-music-player" id="music-player"></div>
 
+  <!-- 弹窗的容器 -->
+  <div id="myModal" class="modal">
+    <!-- 弹窗的内容 -->
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h4 onclick="helpDocs()">Help👈</h4>
+      <input type="text" id="playlistIdInput" placeholder="playlist ID">
+      <button id="saveIdButton">Save</button>
+    </div>
 
-    <meting-js server="netease" type="playlist" id="9035357091" mini="false" list-folded="true">
-    </meting-js>
   </div>
 
+  <!-- 弹窗的HTML结构 -->
+  <div id="helpModal" class="amodal">
+    <div class="browser-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <iframe id="iframeContent" src="about:blank" width="100%" height="90%" style="border-radius: 5px;"></iframe>
+    </div>
+  </div>
 
-  <script>
-    let seconds = 0;
-    let interval = null;
-
-    // 当页面加载时，尝试从localStorage获取背景图片
-    window.onload = function () {
-      const savedBackground = localStorage.getItem('backgroundImageUrl');
-      if (savedBackground) {
-        document.body.style.backgroundImage = `url(${savedBackground})`;
-      }
-    };
-
-    function setBackground(files) {
-      if (files.length > 0) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const backgroundImageUrl = e.target.result;
-          document.body.style.backgroundImage = `url(${backgroundImageUrl})`;
-          // 保存背景图片URL到localStorage
-          localStorage.setItem('backgroundImageUrl', backgroundImageUrl);
-        };
-        reader.readAsDataURL(files[0]);
-      }
-    }
-
-    function updateTimer() {
-      let hours = Math.floor(seconds / 3600);
-      let minutes = Math.floor((seconds - (hours * 3600)) / 60);
-      let secs = seconds % 60;
-
-      hours = hours < 10 ? "0" + hours : hours;
-      minutes = minutes < 10 ? "0" + minutes : minutes;
-      secs = secs < 10 ? "0" + secs : secs;
-
-      document.getElementById("timer").textContent = hours + ":" + minutes + ":" + secs;
-    }
-
-    function startPauseTimer() {
-      if (interval === null) {
-        interval = setInterval(() => {
-          seconds++;
-          updateTimer();
-        }, 1000);
-        document.getElementById("startPauseBtn").textContent = "Pause";
-      } else {
-        clearInterval(interval);
-        interval = null;
-        document.getElementById("startPauseBtn").textContent = "Start";
-      }
-    }
-
-    function resetTimer() {
-      clearInterval(interval);
-      interval = null;
-      seconds = 0;
-      updateTimer();
-      document.getElementById("startPauseBtn").textContent = "Start";
-    }
-
-
-    // 侧边栏
-    const toggleButton = document.getElementById('toggleButton');
-    const sidebar = document.getElementById('sidebar');
-
-    function toggleSidebar() {
-      sidebar.classList.toggle('open');
-      // Update the button text based on the sidebar's open state
-      toggleButton.innerHTML = sidebar.classList.contains('open') ? '&times;' : '&#9776;';
-    }
-
-
-    // 点击事件处理函数
-    function handleClickOutside(e) {
-      // 检查点击事件是否发生在侧边栏或按钮之外
-      if (!sidebar.contains(e.target) && e.target !== toggleButton) {
-        if (sidebar.classList.contains('open')) {
-          sidebar.classList.remove('open');
-          toggleButton.innerHTML = '&#9776;'; // 更新按钮文本
-        }
-      }
-    }
-
-    // 为toggleButton添加点击事件监听器
-    toggleButton.addEventListener('click', toggleSidebar);
-    // 为整个文档添加点击事件监听器
-    document.addEventListener('click', handleClickOutside);
-
-
-    document.addEventListener('keydown', (event) => {
-      // 禁用F11默认行为
-      if (event.key === 'F11') {
-        event.preventDefault();
-      }
-    });
-
-  </script>
-  
+  <script src="./renderer.js"></script>
   <!-- 加载太久了放最后 -->
   <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
   <!-- require MetingJS -->

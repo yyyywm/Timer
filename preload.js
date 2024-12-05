@@ -15,4 +15,18 @@ window.addEventListener('DOMContentLoaded', () => {
   for (const type of ['chrome', 'node', 'electron']) {
     replaceText(`${type}-version`, process.versions[type])
   }
+  
+  // load the music player
+  var container = document.getElementById('music-player');
+  const savedId = localStorage.getItem('playlistId');
+  if(container){
+    if (savedId) {
+      container.innerHTML = ' <meting-js server="netease" type="playlist" id="' + savedId + '" mini="false" list-folded="true">';
+    }else{
+      container.innerHTML = ' <meting-js server="netease" type="playlist" id="7515376033" mini="false" list-folded="true">';
+
+    }
+  }
+  
+  console.log(container);
 })
