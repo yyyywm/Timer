@@ -5,6 +5,8 @@
   <meta charset="UTF-8">
   <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
   <meta name="viewport" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+  <!-- require APlayer -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css">
   <title>Simple Timer</title>
   <style>
     body {
@@ -106,6 +108,24 @@
     .toggle-button:hover {
       background-color: rgba(0, 0, 0, 0.7);
     }
+
+    /* 自定义播放器样式 */
+    .custom-music-player {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      z-index: 1000;
+    }
+
+    /* 鼠标悬停时的效果 */
+    .custom-music-player:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
   </style>
 </head>
 
@@ -135,7 +155,16 @@
     <button onclick="resetTimer()">Reset</button>
 
   </div>
-  
+
+  <!-- 底部播放器 -->
+  <div class="custom-music-player">
+
+
+    <meting-js server="netease" type="playlist" id="9035357091" mini="false" list-folded="true">
+    </meting-js>
+  </div>
+
+
   <script>
     let seconds = 0;
     let interval = null;
@@ -230,7 +259,13 @@
         event.preventDefault();
       }
     });
+
   </script>
+  
+  <!-- 加载太久了放最后 -->
+  <script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script>
+  <!-- require MetingJS -->
+  <script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
 </body>
 
 </html>
