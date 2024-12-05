@@ -135,11 +135,7 @@
     <button onclick="resetTimer()">Reset</button>
 
   </div>
-
-  <link rel="stylesheet" href="APlayer.min.css">
-  <div id="aplayer"></div>
-  <script src="APlayer.min.js"></script>
-
+  
   <script>
     let seconds = 0;
     let interval = null;
@@ -233,16 +229,6 @@
       if (event.key === 'F11') {
         event.preventDefault();
       }
-    });
-
-    const ap = new APlayer({
-      container: document.getElementById('aplayer'),
-      audio: [{
-        name: 'name',
-        artist: 'artist',
-        url: 'https://m704.music.126.net/20241205092316/39ac7a25c976f1be1364fcb723157782/jdyyaac/045f/040b/0f0b/35e5eb94fc3a8aa6f6c48a28748419b4.m4a?',
-        cover: 'cover.jpg'
-      }]
     });
   </script>
 </body>
