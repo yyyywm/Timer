@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, globalShortcut } = require('electron')
+const { app, BrowserWindow, globalShortcut, ipcMain } = require('electron')
 const path = require('node:path')
 
 const electron = require('electron')
@@ -22,6 +22,7 @@ function createWindow() {
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
 
+  // 快捷键事件
   globalShortcut.register('F11', () => {
     // 切换全屏状态
     if (mainWindow) {
@@ -31,6 +32,10 @@ function createWindow() {
         mainWindow.setFullScreen(true);
       }
     }
+  });
+
+  globalShortcut.register('Space', () => {
+    mainWindow.webContents.send('Space_key');
   });
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()

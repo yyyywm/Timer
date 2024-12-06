@@ -93,8 +93,10 @@ document.addEventListener('click', handleClickOutside);
 
 
 document.addEventListener('keydown', (event) => {
-    // 禁用F11默认行为
+    // 禁用按键默认行为
     if (event.key === 'F11') {
+        event.preventDefault();
+    } else if (event.key === 'Space') {
         event.preventDefault();
     }
 });
@@ -118,8 +120,11 @@ span.onclick = function () {
 btn.onclick = function () {
     var idInput = document.getElementById('playlistIdInput');
     var id = idInput.value;
-    localStorage.setItem('playlistId', id); // 保存ID到localStorage
-    modal.style.display = "none"; // 关闭弹窗
+    const regex = /id=(\d+)/;
+    const match = id.match(regex);
+    console.log(match);             // 奇怪，解析结果有点问题
+    localStorage.setItem('playlistId', match[1]); // 保存ID到localStorage
+    modal.style.display = "none";       // 关闭弹窗
     window.location.reload();
 }
 
@@ -138,3 +143,8 @@ function showLinkInModal(url) {
 function closeModal() {
     document.getElementById('helpModal').style.display = "none";
 }
+
+// communication: main->render
+window.spaceEvent.spaceKey(() => {
+    startPauseTimer();
+})

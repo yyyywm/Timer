@@ -6,6 +6,12 @@
  *
  * https://www.electronjs.org/docs/latest/tutorial/sandbox
  */
+const { contextBridge, ipcRenderer } = require('electron');
+
+contextBridge.exposeInMainWorld('spaceEvent', {
+  spaceKey: (callback) => ipcRenderer.on('Space_key', () => callback()),
+})
+
 window.addEventListener('DOMContentLoaded', () => {
   const replaceText = (selector, text) => {
     const element = document.getElementById(selector)
@@ -15,18 +21,18 @@ window.addEventListener('DOMContentLoaded', () => {
   for (const type of ['chrome', 'node', 'electron']) {
     replaceText(`${type}-version`, process.versions[type])
   }
-  
+
   // load the music player
   var container = document.getElementById('music-player');
   const savedId = localStorage.getItem('playlistId');
-  if(container){
+  if (container) {
     if (savedId) {
       container.innerHTML = ' <meting-js server="netease" type="playlist" id="' + savedId + '" mini="false" list-folded="true">';
-    }else{
+    } else {
       container.innerHTML = ' <meting-js server="netease" type="playlist" id="7515376033" mini="false" list-folded="true">';
 
     }
   }
-  
+
   console.log(container);
 })
