@@ -6,11 +6,11 @@
  *
  * https://www.electronjs.org/docs/latest/tutorial/sandbox
  */
-const { contextBridge, ipcRenderer } = require('electron');
+// const { contextBridge, ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld('spaceEvent', {
-  spaceKey: (callback) => ipcRenderer.on('Space_key', () => callback()),
-})
+// contextBridge.exposeInMainWorld('spaceEvent', {
+//   spaceKey: (callback) => ipcRenderer.on('Space_key', () => callback()),
+// })
 
 window.addEventListener('DOMContentLoaded', () => {
   const replaceText = (selector, text) => {
@@ -34,5 +34,5 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  console.log(container);
+  // console.log(container);
 })

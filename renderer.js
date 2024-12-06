@@ -93,12 +93,15 @@ document.addEventListener('click', handleClickOutside);
 
 
 document.addEventListener('keydown', (event) => {
-    // 禁用按键默认行为
+    // 禁用F11默认行为
     if (event.key === 'F11') {
         event.preventDefault();
-    } else if (event.key === 'Space') {
-        event.preventDefault();
+    } else if (event.code === 'Space') {
+        // event.preventDefault();
+        startPauseTimer();
+        console.log("space event");
     }
+    console.log("keydown:"+event.code);
 });
 
 // 弹窗部分内容
@@ -145,6 +148,7 @@ function closeModal() {
 }
 
 // communication: main->render
-window.spaceEvent.spaceKey(() => {
-    startPauseTimer();
-})
+// window.spaceEvent.spaceKey(() => {
+//     // startPauseTimer();
+//     console.log("pass");
+// })
