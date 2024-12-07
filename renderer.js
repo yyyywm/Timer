@@ -7,6 +7,13 @@
  */
 let seconds = 0;
 let interval = null;
+const LogEnable = false;
+
+function log(msg) {
+    if (LogEnable) {
+        console.log(msg);
+    }
+}
 
 // 当页面加载时，尝试从localStorage获取背景图片
 window.onload = function () {
@@ -53,6 +60,7 @@ function startPauseTimer() {
         interval = null;
         document.getElementById("startPauseBtn").textContent = "Start";
     }
+    intervalTime();     // 计算时间间隔
 }
 
 function resetTimer() {
@@ -61,6 +69,7 @@ function resetTimer() {
     seconds = 0;
     updateTimer();
     document.getElementById("startPauseBtn").textContent = "Start";
+    oldtime = newtime = 0;      // 重置时间记录
 }
 
 
@@ -99,9 +108,9 @@ document.addEventListener('keydown', (event) => {
     } else if (event.code === 'Space') {
         // event.preventDefault();
         startPauseTimer();
-        console.log("space event");
+        log("space event");
     }
-    console.log("keydown:"+event.code);
+    log("keydown:" + event.code);
 });
 
 // 弹窗部分内容
@@ -125,7 +134,7 @@ btn.onclick = function () {
     var id = idInput.value;
     const regex = /id=(\d+)/;
     const match = id.match(regex);
-    console.log(match);             // 奇怪，解析结果有点问题
+    log(match);             // 奇怪，解析结果有点问题
     localStorage.setItem('playlistId', match[1]); // 保存ID到localStorage
     modal.style.display = "none";       // 关闭弹窗
     window.location.reload();
@@ -150,5 +159,52 @@ function closeModal() {
 // communication: main->render
 // window.spaceEvent.spaceKey(() => {
 //     // startPauseTimer();
-//     console.log("pass");
+//     log("pass");
 // })
+
+// Record Moder for English reading
+function RecordMode() {
+    log("recordmode");
+    var container = document.getElementById("record-display");
+    if (document.getElementById("record-container") == null) {
+        container.innerHTML = '<div id="record-container"></div>';
+    } else {
+        container.removeChild(container.firstChild);
+    }
+}
+
+let oldtime = 0, newtime = 0;
+function intervalTime() {
+    // save time
+    newtime = seconds;
+    var savetime = newtime - oldtime;
+    oldtime = newtime;
+
+    let sec = savetime % 60;
+    let min = Math.floor(savetime / 60);
+    if (savetime) {
+        log(document.getElementById("timer").textContent);
+        // log("savetime:" + savetime)
+        min = min < 10 ? "0" + min : min;
+        sec = sec < 10 ? "0" + sec : sec;
+        log(min + ":" + sec);
+        if (document.getElementById("record-container")) {
+            dispalyRecord(min + ":" + sec);
+        }
+    }
+}
+
+function dispalyRecord(text) {
+    const container = document.getElementById("record-container");
+
+    const newContent = '<div class="record">' + text + '</div>';
+    container.innerHTML += newContent;
+
+    const textContent = document.getElementsByClassName("record");
+    container.scrollTop += textContent.offsetHeight;        // 滚动
+    // 最多纪录五条
+    if (container.children.length > 5) {
+        container.removeChild(container.firstChild);
+    }
+
+}
