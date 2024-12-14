@@ -134,10 +134,25 @@ btn.onclick = function () {
     var id = idInput.value;
     const regex = /id=(\d+)/;
     const match = id.match(regex);
-    log(match);             // 奇怪，解析结果有点问题
+    log(match[1]);             // 奇怪，解析结果有点问题
     localStorage.setItem('playlistId', match[1]); // 保存ID到localStorage
     modal.style.display = "none";       // 关闭弹窗
-    window.location.reload();
+    loadMusic();
+    // window.location.reload();   不能使用页面整体刷新
+}
+
+function loadMusic() {
+    var container = document.getElementById('music-player');
+    const savedId = localStorage.getItem('playlistId');
+    if (container) {
+        if (savedId) {
+            container.innerHTML = ' <meting-js server="netease" type="playlist" id="' + savedId + '" mini="false" list-folded="true">';
+        } else {
+            container.innerHTML = ' <meting-js server="netease" type="playlist" id="7515376033" mini="false" list-folded="true">';
+
+        }
+    }
+
 }
 
 function helpDocs() {

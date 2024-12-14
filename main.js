@@ -38,6 +38,7 @@ function createWindow() {
   // globalShortcut.register('Space', () => {
   //   mainWindow.webContents.send('Space_key');
   // });
+
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
 }
