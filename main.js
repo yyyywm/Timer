@@ -17,6 +17,7 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
+      backgroundThrottling: false,
       preload: path.join(__dirname, 'preload.js'),
     },
     // frame: false,
@@ -64,6 +65,7 @@ function createtimeWindow() {
     alwaysOnTop: true, // 窗口置顶
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      backgroundThrottling: false,
     },
   });
 
