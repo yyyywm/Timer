@@ -11,6 +11,16 @@
 // contextBridge.exposeInMainWorld('spaceEvent', {
 //   spaceKey: (callback) => ipcRenderer.on('Space_key', () => callback()),
 // })
+const { contextBridge, ipcRenderer } = require('electron');
+
+contextBridge.exposeInMainWorld('ipcRenderer', {
+  send: (channel, data) => {
+    ipcRenderer.send(channel, data);
+  },
+  on: (channel, data) => {
+    ipcRenderer.on(channel, data);
+  },
+})
 
 window.addEventListener('DOMContentLoaded', () => {
   const replaceText = (selector, text) => {

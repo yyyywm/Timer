@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="default-src 'self',script-src 'self', style-src 'self' 'unsafe-inline'">
+    <link rel="stylesheet" href="./styles.css">
+    <title>time</title>
+    <style>
+        .drag {
+            position: absolute;
+            top: 0px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+            background-color: rgba(0, 0, 0, 0.3);
+            /* 设置背景透明度 */
+            color: white;
+            font-size: 24px;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            border-radius: 5px;
+            user-select: none;
+            /* 禁止文本选中 */
+            -webkit-app-region: drag;
+            /* 整个页面可拖拽 */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="drag">
+        <div id="timer">00:00:00</div>
+    </div>
+    <script src="./renderer.js"></script>
+
+</body>
+
+</html>

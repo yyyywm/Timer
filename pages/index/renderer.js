@@ -45,7 +45,10 @@ function updateTimer() {
     minutes = minutes < 10 ? "0" + minutes : minutes;
     secs = secs < 10 ? "0" + secs : secs;
 
-    document.getElementById("timer").textContent = hours + ":" + minutes + ":" + secs;
+    var data = hours + ":" + minutes + ":" + secs;
+    document.getElementById("timer").textContent = data;
+    updateSend(data);
+    
 }
 
 function startPauseTimer() {
@@ -222,4 +225,12 @@ function dispalyRecord(text) {
         container.removeChild(container.firstChild);
     }
 
+}
+// 显示桌面计时窗口
+function Display(){
+    window.ipcRenderer.send('display');
+}
+// 更新时间发送到主进程
+function updateSend(time){
+    window.ipcRenderer.send('update-time',time)
 }
