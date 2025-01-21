@@ -5,6 +5,32 @@
  * `contextIsolation` is turned on. Use the contextBridge API in `preload.js`
  * to expose Node.js functionality from the main process.
  */
+/// TODO: 确定一下每个功能的启动顺序
+// mqtt连接成功 
+window.ipcRenderer.on('mqtt-ready', (event, data) => {
+    console.log(data);
+    // alert("connect sucessfully!");
+})
+
+// 开启计时
+var tmp;
+window.ipcRenderer.on('start', (event, data) => {
+    // console.log(data);
+    data = Number(data);    // 不太行，如果软件动了，硬件乱了
+    if (data && tmp != data) {
+        tmp = data;
+        startPauseTimer();  // 先不解析数据了，直接收到数据就反转
+    } else if (data == 0 && tmp != data) {
+        startPauseTimer();
+        tmp = data;
+    }
+})
+
+// 消息提示窗口
+window.ipcRenderer.on('msg', (event, data) => {
+    alert(data);
+})
+
 let seconds = 0;
 let interval = null;
 const LogEnable = false;
@@ -48,7 +74,7 @@ function updateTimer() {
     var data = hours + ":" + minutes + ":" + secs;
     document.getElementById("timer").textContent = data;
     updateSend(data);
-    
+
 }
 
 function startPauseTimer() {
@@ -116,32 +142,70 @@ document.addEventListener('keydown', (event) => {
     log("keydown:" + event.code);
 });
 
+// 歌单弹窗部分
 // 弹窗部分内容
-var modal = document.getElementById("myModal");
-var btn = document.getElementById("saveIdButton");
-var span = document.getElementsByClassName("close")[0]; // 第一个弹窗
+var Pmodal = document.getElementById("PlaylistModal");
+var Pbtn = document.getElementById("saveIdButton");
+var Pspan = document.getElementsByClassName("PlaylistModalclose")[0]; // 第一个弹窗
 
 // 打开弹窗
 function openModal() {
-    modal.style.display = "block";
+    Pmodal.style.display = "block";
 }
 
 // 关闭弹窗
-span.onclick = function () {
-    modal.style.display = "none";
+Pspan.onclick = function () {
+    Pmodal.style.display = "none";
 }
 
 // 点击保存按钮时保存ID并关闭弹窗
-btn.onclick = function () {
+Pbtn.onclick = function () {
     var idInput = document.getElementById('playlistIdInput');
     var id = idInput.value;
     const regex = /id=(\d+)/;
     const match = id.match(regex);
     log(match[1]);             // 奇怪，解析结果有点问题
     localStorage.setItem('playlistId', match[1]); // 保存ID到localStorage
-    modal.style.display = "none";       // 关闭弹窗
+    Pmodal.style.display = "none";       // 关闭弹窗
     loadMusic();
     // window.location.reload();   不能使用页面整体刷新
+}
+
+var Umodal = document.getElementById("urlModal");
+var Ubtn = document.getElementById("urlSaveButton");
+var Uspan = document.getElementsByClassName("urlModalclose")[0]; // 第一个弹窗
+
+// 打开弹窗
+function openUModal() {
+    Umodal.style.display = "block";
+}
+
+// 关闭弹窗
+Uspan.onclick = function () {
+    Umodal.style.display = "none";
+}
+
+const uploadtime = document.getElementById('uploadTime');
+
+// 左键点击事件
+uploadtime.addEventListener('click', (event) => {
+    console.log('Left click');
+    uploadTime();
+});
+
+// 右键点击事件
+uploadtime.addEventListener('contextmenu', (event) => {
+    event.preventDefault(); // 阻止默认右键菜单
+    console.log('Right click');
+    openUModal();
+    document.getElementById("urlInput").value = localStorage.getItem('url')
+
+});
+
+Ubtn.onclick = function () {
+    var idInput = document.getElementById('urlInput').value;
+    localStorage.setItem('url',idInput); // 保存ID到localStorage
+    Umodal.style.display = "none";       // 关闭弹窗
 }
 
 function loadMusic() {
@@ -227,10 +291,46 @@ function dispalyRecord(text) {
 
 }
 // 显示桌面计时窗口
-function Display(){
+function Display() {
     window.ipcRenderer.send('display');
 }
 // 更新时间发送到主进程
-function updateSend(time){
-    window.ipcRenderer.send('update-time',time)
+function updateSend(time) {
+    window.ipcRenderer.send('update-time', time)
 }
+
+function mqttWin() {
+    window.ipcRenderer.send('mqtt-win');
+}
+
+function mqttConnect() {
+    var data = JSON.parse(localStorage.getItem('mqttConfig'));
+    log(data.brokerUrl, data.productKey);
+    window.ipcRenderer.send('mqtt-connect', data);
+}
+
+
+
+function uploadTime() {
+    const date = new Date();
+
+    const year = date.getFullYear(); // 获取年份（4 位数）
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // 获取月份（0-11，需要 +1）
+    const day = String(date.getDate()).padStart(2, '0'); // 获取日期（1-31）
+
+    const formattedDate = `${year}-${month}-${day}`; // 格式化为 YYYY-MM-DD
+    console.log(formattedDate);
+
+    localStorage.getItem('url')
+    // postTime(formattedDate, document.getElementById("timer").textContent)
+    const data = {
+        url: localStorage.getItem('url'),
+        date: formattedDate,
+        time: document.getElementById("timer").textContent
+    }
+    window.ipcRenderer.send('upload-time', data)
+    console.log(formattedDate, document.getElementById("timer").textContent)
+
+}
+
+mqttConnect();

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MQTT 连接配置</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>MQTT 连接配置</h1>
+        <div id="mqtt-config-form">
+            <label for="broker-url">Broker URL:</label>
+            <input type="text" id="brokerUrl" placeholder="mqtt://broker.hivemq.com:1883" required>
+
+            <label for="productKey">Product Key:</label>
+            <input type="text" id="productKey" placeholder="my-client-id" required>
+
+            <label for="deviceName">Device Name:</label>
+            <input type="text" id="deviceName" placeholder="..">
+
+            <label for="deviceSecret">Device Secrect:</label>
+            <input type="password" id="deviceSecret" placeholder="..">
+
+             </div>
+
+        <div class="status">
+            <button type="save-button" id="connect-button" onclick="SaveConnect()">保存</button>
+            <button type="test-button" id="disconnect-button" onclick="TestConnect()">测试连接</button>
+            <strong>状态:</strong> <span id="status" style="color:red">未连接</span>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+
+</html>

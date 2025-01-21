@@ -1,15 +1,17 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, globalShortcut, ipcMain } = require('electron')
 const path = require('node:path')
-
-const electron = require('electron')
+const axios = require('axios');
+const iot = require('alibabacloud-iot-device-sdk');
+const electron = require('electron');
 /*获取electron窗体的菜单栏*/
 const Menu = electron.Menu
 /*隐藏electron创听的菜单栏*/
 Menu.setApplicationMenu(null)
 
-let timeWindow;
-let mainWindow;
+var timeWindow;
+var mainWindow;
+var mqttWin;
 
 function createWindow() {
   // Create the browser window.
@@ -52,7 +54,7 @@ function createWindow() {
   // });
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools();
 }
 
 
@@ -78,11 +80,31 @@ function createtimeWindow() {
 
 }
 
+// mqtt配置参数窗口，输入完之后，
+function createMqttWindow() {
+  mqttWin = new BrowserWindow({
+    width: 800,
+    height: 600,
+    alwaysOnTop: true, // 窗口置顶
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      backgroundThrottling: false,
+    },
+  });
+
+  mqttWin.loadFile('./pages/mqtt/index.html');
+  mqttWin.on('closed', () => {
+    mqttWin = null;
+  });
+
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  createWindow()
+  createWindow();
+
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -106,6 +128,8 @@ app.on('window-all-closed', function () {
 ipcMain.on('display', (event) => {
   if (timeWindow == null) {
     createtimeWindow();
+  } else {
+    timeWindow.close();
   }
 })
 
@@ -117,3 +141,93 @@ ipcMain.on('update-time', (event, time) => {
     timeWindow.webContents.send('settime', time);
   }
 })
+
+// 打开mqtt配置窗口
+ipcMain.on('mqtt-win', (event) => {
+  if (mqttWin == null) {
+    createMqttWindow();
+    // mqttWin.webContents.openDevTools();
+  } else {
+    mqttWin.close();
+  }
+})
+
+// 创建mqtt连接
+ipcMain.on('mqtt-connect', (event, data) => {
+  mqttConnect(data);
+})
+
+// MQTT
+/// TODO: MQTT部分得重构，用mqtt原始库，不用阿里云SDK
+function mqttConnect(data) {
+  const device = iot.device({
+    productKey: data.productKey,
+    deviceName: data.deviceName,
+    deviceSecret: data.deviceSecret,
+    brokerUrl: data.brokerUrl,
+    keepalive: 1200
+  })
+  // console.log(data);
+
+  device.end();   // 防止二次连接
+  device.on('connect', () => {
+    // 刚连接的，publish都能报错disconnect
+    device.publish('/' + data.productKey + '/' + data.deviceName + '/user/alive', 'Alive!');
+    if (mqttWin) {
+      mqttWin.webContents.send('mqtt-ready', "mqtt ready!");
+    } else {
+      // mainWindow.webContents.send('msg', "connect sucessfully!");
+    }
+  });
+  device.on('error', (err) => {
+    console.log(err); // 又没断开，报什么错,error太抽象了
+    // mainWindow.webContents.send('msg', "connect error!");
+
+  });
+  device.on('close', () => {
+    console.log("close");
+    mainWindow.webContents.send('msg', "connect close!");
+  });
+  device.on('offline', () => {
+    console.log("offline");
+    mainWindow.webContents.send('msg', "connect offline!");
+
+  });
+  /// TODO: 后面换物模型吧，方便上下协同
+  //订阅指定topic
+  device.subscribe('/' + data.productKey + '/' + data.deviceName + '/user/get', { qos: 0 });
+  // What? I'm alive
+  // 每分钟执行一次,发送心跳包
+  setInterval(() => {
+    device.publish('/' + data.productKey + '/' + data.deviceName + '/user/alive', 'Alive!');
+    console.log('This runs every 1 minute');
+  }, 60 * 1000); // 60 秒 * 1000 毫秒
+
+  //接收到数据时将topic以及消息打印出来
+  device.on('message', (topic, payload) => {
+    console.log(topic, payload.toString());
+    mainWindow.webContents.send('start', payload.toString());
+  });
+}
+
+
+// Axios
+ipcMain.on('upload-time', (event, data) => {
+  console.log(data);
+  postTime(data.url, data.date, data.time);
+})
+
+async function postTime(url, date, time) {
+  const data = {
+    date: date,
+    time: time,
+  };
+
+  try {
+    const response = await axios.post(url, data);
+    mainWindow.webContents.send('msg', "upload success!")
+  } catch (error) {
+    console.log(error)
+    mainWindow.webContents.send('msg', "upload error!")
+  }
+}

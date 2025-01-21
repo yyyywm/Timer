@@ -1,0 +1,143 @@
+/* 全局样式 */
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    /* min-height: 100vh; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+  }
+  
+  /* 容器 */
+  .container {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  /* 标题 */
+  h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1f2937;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* 表单组 */
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  /* 标签 */
+  label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* 输入框 */
+  input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: #1f2937;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  }
+  
+  /* 按钮组 */
+  .button-group {
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    gap: 1rem; /* 按钮之间的间距 */
+    margin-top: 1.5rem;
+  }
+  
+  /* 按钮 */
+  button {
+    flex: 1; /* 让按钮平分可用空间 */
+    max-width: 150px; /* 限制按钮的最大宽度 */
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  button:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+  }
+  
+  #connect-button {
+    background-color: #3b82f6;
+    color: white;
+  }
+  
+  #connect-button:hover {
+    background-color: #2563eb;
+  }
+  
+  #disconnect-button {
+    background-color: #ef4444;
+    color: white;
+  }
+  
+  #disconnect-button:hover {
+    background-color: #dc2626;
+  }
+  
+  /* 状态区域 */
+  .status {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    color: #374151;
+    text-align: center;
+  }
+  
+  /* 消息区域 */
+  .messages {
+    margin-top: 1.5rem;
+  }
+  
+  .messages h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 1rem;
+  }
+  
+  #message-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  #message-list li {
+    padding: 0.75rem;
+    background-color: #f3f4f6;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    color: #1f2937;
+    font-size: 0.875rem;
+  }

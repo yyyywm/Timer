@@ -25,8 +25,16 @@
       <ul class="sidebar-menu">
         <li><label for="backgroundSetter">Background</label></li>
         <li><label onclick="openModal()">Play List</label></li>
-        <li><lable onclick="RecordMode()">Record Mode</lable></li>
-        <li><lable onclick="Display()">mini window</lable></li>
+        <li><label id="uploadTime">Upload Time</label></li>
+        <li>
+          <lable onclick="RecordMode()">Record Mode</lable>
+        </li>
+        <li>
+          <lable onclick="Display()">mini window</lable>
+        </li>
+        <li>
+          <lable onclick="mqttWin()">MQTT config</lable>
+        </li>
         <li><label>to be continue</label></li>
         <!-- Add more settings options here -->
       </ul>
@@ -45,11 +53,11 @@
   <!-- 底部播放器 -->
   <div class="custom-music-player" id="music-player"></div>
 
-  <!-- 弹窗的容器 -->
-  <div id="myModal" class="modal">
+  <!-- 歌单输入弹窗 -->
+  <div id="PlaylistModal" class="modal">
     <!-- 弹窗的内容 -->
     <div class="modal-content">
-      <span class="close">&times;</span>
+      <span class="PlaylistModalclose">&times;</span>
       <h4 onclick="helpDocs()">Help👈</h4>
       <input type="text" id="playlistIdInput" placeholder="playlist ID">
       <button id="saveIdButton">Save</button>
@@ -57,9 +65,21 @@
 
   </div>
 
+  <!-- 上传时间URL弹窗 -->
+  <div id="urlModal" class="modal">
+    <!-- 弹窗的内容 -->
+    <div class="modal-content">
+      <span class="urlModalclose">&times;</span>
+      <h4 onclick="helpDocs()">URL</h4>
+      <input type="text" id="urlInput" placeholder="url">
+      <button id="urlSaveButton">Save</button>
+    </div>
+
+  </div>
+
   <!-- 记录显示 -->
   <div id="record-display"></div>
-  
+
   <!-- 弹窗的HTML结构 -->
   <div id="helpModal" class="amodal">
     <div class="browser-content">
