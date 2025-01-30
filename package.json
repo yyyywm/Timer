@@ -30,7 +30,7 @@
     "alibabacloud-iot-device-sdk": "^1.2.8",
     "aplayer": "^1.10.1",
     "axios": "^1.7.9",
-    "electron": "^33.3.1",
+    "electron": "^34.0.2",
     "mqtt": "^5.10.3",
     "nodemon": "^3.1.9"
   },
